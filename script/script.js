@@ -21,7 +21,8 @@ const GameBoard = (function (){
     }
 
     function displayGameBoard(){
-        console.log(gameBoard);
+        console.log([...gameBoard]);
+        console.log(gameBoard[0][1])
     }
     
     return {
@@ -41,10 +42,6 @@ function playGame(){
     const player2 = new CreatePlayer("Player2", "O");    
     GameBoard.displayGameBoard();
     GameBoard.setValueGameBoard(0,1,player1.value)
-}
-
-function displayGameBoard(){
-
 }
 
 newGame();
