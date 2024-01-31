@@ -12,7 +12,7 @@ const GameBoard = (function ()
     const gameBoard = [];
     while (gameBoard.length < 3)
     {
-        const row = new Array(3).fill(Math.random()); // Not Optimal extremely low chance of this causing a bug if players only fill in two rows. Maybe make each cell of the array a random value?
+        const row = new Array(3).fill(Math.round((Math.random()) * 25)); // Not Optimal extremely low chance of this causing a bug if players only fill in two rows. Maybe make each cell of the array a random value?
         gameBoard.push(row);
     }
 
@@ -29,17 +29,18 @@ const GameBoard = (function ()
 
     function displayGameBoard()
     {
-        console.log(
-            JSON.parse(
-                JSON.stringify(gameBoard)
-            )
-        ); // Code provided by tobyplaysuke can be useful for debugging and also solves the issue which occurs when a normal console.log is done with array
-        // console.log(gameBoard);
+        // console.log(
+        //     JSON.parse(
+        //         JSON.stringify(gameBoard)
+        //     )
+        // ); // Code provided by tobyplaysuke can be useful for debugging and also solves the issue which occurs when a normal console.log is done with array
+        return gameBoard;
     }
 
     function checkGameBoardWinner()
     {
         // Could put all with a || but will be harder to troubleshoot maybe loop it?
+
         // 4 Comparisons when center is chosen
         if (gameBoard[1][1] === gameBoard[0][0] && gameBoard[1][1] === gameBoard[2][2])
         {
@@ -98,23 +99,30 @@ function playGame()
     const player2 = new CreatePlayer("Player2", "O");
     GameBoard.displayGameBoard();
     let i = 1
+    // Make a function for the below later called gameflow
     while (!CreatePlayer.prototype.bIsWinnerPresent)
     {
-        let indexOneValue = parseInt(prompt("Enter Value Location"));
-        let indexTwoValue = parseInt(prompt("Enter Value Location"));
-        while (GameBoard.getGameBoardIndex(indexOneValue, indexTwoValue) === 'X' || GameBoard.getGameBoardIndex(indexOneValue, indexTwoValue) === 'O')
-        {
-            indexOneValue = parseInt(prompt("Location Taken Enter A New Value First Index Location"));
-            indexTwoValue = parseInt(prompt("Location Taken Enter A New Value Second Index Location"));
-        }
+        let indexOneValue;
+        let indexTwoValue;
+        [indexOneValue,,indexTwoValue]= displayGameBoardWeb.findPlayerIndex();
+        indexOneValue = parseInt(indexOneValue);
+        indexTwoValue = parseInt(indexTwoValue);
+        // Modify Later for checking if same index is accessed
+        // while (GameBoard.getGameBoardIndex(indexOneValue, indexTwoValue) === 'X' || GameBoard.getGameBoardIndex(indexOneValue, indexTwoValue) === 'O')
+        // {
+        //     indexOneValue = parseInt(prompt("Location Taken Enter A New Value First Index Location"));
+        //     indexTwoValue = parseInt(prompt("Location Taken Enter A New Value Second Index Location"));
+        // }
         if (CreatePlayer.prototype.bIsPlayerTurn)
         {
             GameBoard.setValueGameBoard(indexOneValue, indexTwoValue, player1.value);
+            displayGameBoardWeb.updateDisplayGameBoard();
             CreatePlayer.prototype.bIsPlayerTurn = false;
         }
         else
         {
             GameBoard.setValueGameBoard(indexOneValue, indexTwoValue, player2.value);
+            displayGameBoardWeb.updateDisplayGameBoard();
             CreatePlayer.prototype.bIsPlayerTurn = true;
         }
         if (i > 4 && GameBoard.checkGameBoardWinner())
@@ -131,4 +139,33 @@ function playGame()
     }
 }
 
-// newGame();
+const displayGameBoardWeb = (function ()
+{
+    const allBoardCells = document.querySelectorAll(".boardCell")
+    allBoardCells.forEach((element)=>{
+        element.addEventListener('click',findPlayerIndex)
+    })
+
+    function findPlayerIndex(element){
+        // console.log(element.target.dataset.indexNumber);
+        return element.target.dataset.indexNumber;
+
+    }
+    function updateDisplayGameBoard()
+    {
+        GameBoard.displayGameBoard().reduce((iterativeValue, currentElement) =>
+        {
+            for (let value of currentElement)
+            {
+                allBoardCells[iterativeValue++].textContent = value;
+            }
+            return iterativeValue;
+        }, 0)
+    }
+    return{
+        updateDisplayGameBoard,
+        findPlayerIndex,
+    }
+})();
+
+newGame();
