@@ -97,7 +97,6 @@ function playGame()
     const player1 = new CreatePlayer("Player1", "X") //prompt("Enter Name","test")
     const player2 = new CreatePlayer("Player2", "O");
     GameBoard.displayGameBoard();
-    // !CreatePlayer.prototype.bIsWinnerPresent
     let i = 1
     while (!CreatePlayer.prototype.bIsWinnerPresent)
     {

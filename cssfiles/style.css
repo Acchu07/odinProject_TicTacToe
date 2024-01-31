@@ -1,5 +1,18 @@
-.gameBoard > div{
-    height: 10vh;
-    width: 10vh;
-    background-color: black;
+.gameBoard{
+    display: grid;
+    grid-template-columns: repeat(3,1fr);
+    gap: 1.5rem;
+    place-items: center;
+    font-size: 10vh;
+}
+
+
+h1,h3{
+    display: flex;
+    justify-content: center;
+}
+
+.Player-Container{
+    display: flex;
+    justify-content: space-between;
 }
