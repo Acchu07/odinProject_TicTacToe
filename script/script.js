@@ -12,7 +12,7 @@ const GameBoard = (function ()
     const gameBoard = [];
     while (gameBoard.length < 3)
     {
-        const row = new Array(3).fill(Math.round((Math.random()) * 25)); // Not Optimal extremely low chance of this causing a bug if players only fill in two rows. Maybe make each cell of the array a random value?
+        const row = new Array(3).fill(Math.round((Math.random()) * 25)); // can cause bug if player fills only two rows but low chance though refactor if required
         gameBoard.push(row);
     }
 
@@ -88,15 +88,11 @@ const GameBoard = (function ()
 
 })();
 
-function newGame()
-{
-    playGame();
-}
-
 const PlayersCreated = (function ()
 {
-    const player1 = new CreatePlayer("Player1", "X");
+    const player1 = new CreatePlayer(document.querySelector('#PlayerOne').value, "X");
     const player2 = new CreatePlayer("Player2", "O");
+    console.log(player1.playerName)
     let turns = 1;
 
     function getPlayerOne()
@@ -135,10 +131,6 @@ const PlayersCreated = (function ()
 })();
 
 
-function playGame()
-{
-    GameBoard.displayGameBoard();
-}
 
 const displayGameBoardWeb = (function ()
 {
@@ -162,7 +154,15 @@ const displayGameBoardWeb = (function ()
         {
             for (let value of currentElement)
             {
-                allBoardCells[iterativeValue++].textContent = value;
+                if(value === 'X'){
+                    allBoardCells[iterativeValue].classList.add('boardCellUpdatedBackgroundX');
+                    allBoardCells[iterativeValue].textContent = value;
+                }
+                else if(value === 'O'){
+                    allBoardCells[iterativeValue].classList.add('boardCellUpdatedBackgroundO');
+                    allBoardCells[iterativeValue].textContent = value;
+                }
+                iterativeValue++
             }
             return iterativeValue;
         }, 0)
@@ -176,7 +176,6 @@ const displayGameBoardWeb = (function ()
 
 function gameFlow(element)
 {
-    // Make a function for the below later called gameflow
     const player1 = PlayersCreated.getPlayerOne();
     const player2 = PlayersCreated.getPlayerTwo();
     let indexOneValue;
@@ -184,7 +183,7 @@ function gameFlow(element)
     [indexOneValue, , indexTwoValue] = element.target.dataset.indexNumber;
     indexOneValue = parseInt(indexOneValue);
     indexTwoValue = parseInt(indexTwoValue);
-    // Modify Later for checking
+    //Checks for click on an index which has X or O
     if (GameBoard.getGameBoardIndex(indexOneValue, indexTwoValue) === 'X' || GameBoard.getGameBoardIndex(indexOneValue, indexTwoValue) === 'O')
     {
         return;
@@ -214,4 +213,3 @@ function gameFlow(element)
     }
     PlayersCreated.updateTurns();
 }
-
