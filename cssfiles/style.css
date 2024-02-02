@@ -2,7 +2,7 @@
     display: grid;
     grid-template-columns: repeat(3,1fr);
     gap: 1.5rem;
-    place-items: center;
+    align-items: stretch;
     font-size: 10vh;
 }
 
@@ -15,4 +15,12 @@ h1,h3{
 .Player-Container{
     display: flex;
     justify-content: space-between;
+}
+
+.boardCell{
+    text-align: center;
+}
+
+.boardCell:hover{
+    cursor: pointer;
 }

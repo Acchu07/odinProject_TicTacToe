@@ -93,64 +93,69 @@ function newGame()
     playGame();
 }
 
+const PlayersCreated = (function ()
+{
+    const player1 = new CreatePlayer("Player1", "X");
+    const player2 = new CreatePlayer("Player2", "O");
+    let turns = 1;
+
+    function getPlayerOne()
+    {
+        return {
+            name: player1.playerName,
+            value: player1.value
+        };
+    }
+
+    function getPlayerTwo()
+    {
+        return {
+            name: player2.playerName,
+            value: player2.value
+        };
+    }
+
+    function updateTurns()
+    {
+        turns++;
+    }
+
+    function checkTurns()
+    {
+        return turns;
+    }
+
+    return {
+        getPlayerOne,
+        getPlayerTwo,
+        updateTurns,
+        checkTurns
+    }
+
+})();
+
+
 function playGame()
 {
-    const player1 = new CreatePlayer("Player1", "X") //prompt("Enter Name","test")
-    const player2 = new CreatePlayer("Player2", "O");
     GameBoard.displayGameBoard();
-    let i = 1
-    // Make a function for the below later called gameflow
-    while (!CreatePlayer.prototype.bIsWinnerPresent)
-    {
-        let indexOneValue;
-        let indexTwoValue;
-        [indexOneValue,,indexTwoValue]= displayGameBoardWeb.findPlayerIndex();
-        indexOneValue = parseInt(indexOneValue);
-        indexTwoValue = parseInt(indexTwoValue);
-        // Modify Later for checking if same index is accessed
-        // while (GameBoard.getGameBoardIndex(indexOneValue, indexTwoValue) === 'X' || GameBoard.getGameBoardIndex(indexOneValue, indexTwoValue) === 'O')
-        // {
-        //     indexOneValue = parseInt(prompt("Location Taken Enter A New Value First Index Location"));
-        //     indexTwoValue = parseInt(prompt("Location Taken Enter A New Value Second Index Location"));
-        // }
-        if (CreatePlayer.prototype.bIsPlayerTurn)
-        {
-            GameBoard.setValueGameBoard(indexOneValue, indexTwoValue, player1.value);
-            displayGameBoardWeb.updateDisplayGameBoard();
-            CreatePlayer.prototype.bIsPlayerTurn = false;
-        }
-        else
-        {
-            GameBoard.setValueGameBoard(indexOneValue, indexTwoValue, player2.value);
-            displayGameBoardWeb.updateDisplayGameBoard();
-            CreatePlayer.prototype.bIsPlayerTurn = true;
-        }
-        if (i > 4 && GameBoard.checkGameBoardWinner())
-        {
-            GameBoard.checkGameBoardWinner() === 'X' ? console.log(`${player1.playerName} is The Winner`) : console.log(`${player2.playerName} is The Winner`)
-            CreatePlayer.prototype.bIsWinnerPresent = true;
-        }
-        if (i > 8)
-        {
-            console.log(i);
-            break;
-        }
-        i++;
-    }
 }
 
 const displayGameBoardWeb = (function ()
 {
     const allBoardCells = document.querySelectorAll(".boardCell")
-    allBoardCells.forEach((element)=>{
-        element.addEventListener('click',findPlayerIndex)
+    allBoardCells.forEach((element) =>
+    {
+        element.addEventListener('click', gameFlow)
     })
 
-    function findPlayerIndex(element){
-        // console.log(element.target.dataset.indexNumber);
-        return element.target.dataset.indexNumber;
-
+    function removeGameBoardListener()
+    {
+        allBoardCells.forEach((element) =>
+        {
+            element.removeEventListener('click', gameFlow)
+        })
     }
+
     function updateDisplayGameBoard()
     {
         GameBoard.displayGameBoard().reduce((iterativeValue, currentElement) =>
@@ -162,10 +167,51 @@ const displayGameBoardWeb = (function ()
             return iterativeValue;
         }, 0)
     }
-    return{
+    return {
         updateDisplayGameBoard,
-        findPlayerIndex,
+        removeGameBoardListener
     }
 })();
 
-newGame();
+
+function gameFlow(element)
+{
+    // Make a function for the below later called gameflow
+    const player1 = PlayersCreated.getPlayerOne();
+    const player2 = PlayersCreated.getPlayerTwo();
+    let indexOneValue;
+    let indexTwoValue;
+    [indexOneValue, , indexTwoValue] = element.target.dataset.indexNumber;
+    indexOneValue = parseInt(indexOneValue);
+    indexTwoValue = parseInt(indexTwoValue);
+    // Modify Later for checking
+    if (GameBoard.getGameBoardIndex(indexOneValue, indexTwoValue) === 'X' || GameBoard.getGameBoardIndex(indexOneValue, indexTwoValue) === 'O')
+    {
+        return;
+    }
+    if (CreatePlayer.prototype.bIsPlayerTurn)
+    {
+        GameBoard.setValueGameBoard(indexOneValue, indexTwoValue, player1.value);
+        displayGameBoardWeb.updateDisplayGameBoard();
+        CreatePlayer.prototype.bIsPlayerTurn = false;
+    }
+    else
+    {
+        GameBoard.setValueGameBoard(indexOneValue, indexTwoValue, player2.value);
+        displayGameBoardWeb.updateDisplayGameBoard();
+        CreatePlayer.prototype.bIsPlayerTurn = true;
+    }
+    if (PlayersCreated.checkTurns() > 4 && GameBoard.checkGameBoardWinner())
+    {
+        GameBoard.checkGameBoardWinner() === 'X' ? console.log(`${player1.name} is The Winner`) : console.log(`${player2.name} is The Winner`)
+        CreatePlayer.prototype.bIsWinnerPresent = true;
+        displayGameBoardWeb.removeGameBoardListener();
+
+    }
+    if (PlayersCreated.checkTurns() > 8)
+    {
+        console.log(PlayersCreated.checkTurns());
+    }
+    PlayersCreated.updateTurns();
+}
+
