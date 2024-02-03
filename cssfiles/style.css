@@ -40,3 +40,9 @@ h1,h3{
     color: darkorange;
     background-color: darkslategray;
 }
+
+.winner{
+    text-align: center;
+    color: bisque;
+    background-color: orange;
+}

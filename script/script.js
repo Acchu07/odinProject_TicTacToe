@@ -29,11 +29,6 @@ const GameBoard = (function ()
 
     function displayGameBoard()
     {
-        // console.log(
-        //     JSON.parse(
-        //         JSON.stringify(gameBoard)
-        //     )
-        // ); // Code provided by tobyplaysuke can be useful for debugging and also solves the issue which occurs when a normal console.log is done with array
         return gameBoard;
     }
 
@@ -149,6 +144,7 @@ const displayGameBoardWeb = (function ()
 
     function displayWinner(player1,player2){
         const Winner = document.querySelector(".Winner-Text")
+        Winner.classList.add('winner');
         GameBoard.checkGameBoardWinner() === 'X' ? Winner.textContent = `${player1.playerName} is The Winner` : Winner.textContent = `${player2.playerName} is The Winner`;
         CreatePlayer.prototype.bIsWinnerPresent = true;
     }
@@ -195,7 +191,7 @@ function gameFlow(element)
     }
     if (NumberOfTurnsData.checkTurns() > 8)
     {
-        console.log(NumberOfTurnsData.checkTurns());
+        document.querySelector(".Winner-Text").textContent = "Game is a Draw"
     }
     NumberOfTurnsData.updateTurns();
 }
