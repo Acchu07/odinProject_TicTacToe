@@ -12,7 +12,7 @@ const GameBoard = (function ()
     const gameBoard = [];
     while (gameBoard.length < 3)
     {
-        const row = new Array(3).fill(Math.round((Math.random()) * 25)); // can cause bug if player fills only two rows but low chance though refactor if required
+        const row = new Array(3)
         gameBoard.push(row);
     }
 
@@ -88,28 +88,9 @@ const GameBoard = (function ()
 
 })();
 
-const PlayersCreated = (function ()
+const NumberOfTurnsData = (function ()
 {
-    const player1 = new CreatePlayer(document.querySelector('#PlayerOne').value, "X");
-    const player2 = new CreatePlayer("Player2", "O");
-    console.log(player1.playerName)
     let turns = 1;
-
-    function getPlayerOne()
-    {
-        return {
-            name: player1.playerName,
-            value: player1.value
-        };
-    }
-
-    function getPlayerTwo()
-    {
-        return {
-            name: player2.playerName,
-            value: player2.value
-        };
-    }
 
     function updateTurns()
     {
@@ -122,8 +103,6 @@ const PlayersCreated = (function ()
     }
 
     return {
-        getPlayerOne,
-        getPlayerTwo,
         updateTurns,
         checkTurns
     }
@@ -167,17 +146,30 @@ const displayGameBoardWeb = (function ()
             return iterativeValue;
         }, 0)
     }
+
+    function displayWinner(player1,player2){
+        const Winner = document.querySelector(".Winner-Text")
+        GameBoard.checkGameBoardWinner() === 'X' ? Winner.textContent = `${player1.playerName} is The Winner` : Winner.textContent = `${player2.playerName} is The Winner`;
+        CreatePlayer.prototype.bIsWinnerPresent = true;
+    }
+
     return {
         updateDisplayGameBoard,
-        removeGameBoardListener
+        removeGameBoardListener,
+        displayWinner
     }
 })();
 
 
 function gameFlow(element)
 {
-    const player1 = PlayersCreated.getPlayerOne();
-    const player2 = PlayersCreated.getPlayerTwo();
+    let Name1, Name2;
+    document.querySelector("#PlayerOne").value === ""? Name1 = "Player 1": Name1 = document.querySelector("#PlayerOne").value;
+    document.querySelector("#PlayerTwo").value === ""? Name2 = "Player 2": Name2 = document.querySelector("#PlayerTwo").value;
+    
+    const player1 = new CreatePlayer(Name1,'X');
+    const player2 = new CreatePlayer(Name2,'O');
+
     let indexOneValue;
     let indexTwoValue;
     [indexOneValue, , indexTwoValue] = element.target.dataset.indexNumber;
@@ -190,26 +182,39 @@ function gameFlow(element)
     }
     if (CreatePlayer.prototype.bIsPlayerTurn)
     {
-        GameBoard.setValueGameBoard(indexOneValue, indexTwoValue, player1.value);
-        displayGameBoardWeb.updateDisplayGameBoard();
-        CreatePlayer.prototype.bIsPlayerTurn = false;
+        PlayerTurn(player1,player2,indexOneValue,indexTwoValue);
     }
     else
     {
-        GameBoard.setValueGameBoard(indexOneValue, indexTwoValue, player2.value);
-        displayGameBoardWeb.updateDisplayGameBoard();
-        CreatePlayer.prototype.bIsPlayerTurn = true;
+        PlayerTurn(player1,player2,indexOneValue,indexTwoValue);
     }
-    if (PlayersCreated.checkTurns() > 4 && GameBoard.checkGameBoardWinner())
+    if (NumberOfTurnsData.checkTurns() > 4 && GameBoard.checkGameBoardWinner())
     {
-        GameBoard.checkGameBoardWinner() === 'X' ? console.log(`${player1.name} is The Winner`) : console.log(`${player2.name} is The Winner`)
-        CreatePlayer.prototype.bIsWinnerPresent = true;
         displayGameBoardWeb.removeGameBoardListener();
-
+        displayGameBoardWeb.displayWinner(player1,player2)        
     }
-    if (PlayersCreated.checkTurns() > 8)
+    if (NumberOfTurnsData.checkTurns() > 8)
     {
-        console.log(PlayersCreated.checkTurns());
+        console.log(NumberOfTurnsData.checkTurns());
     }
-    PlayersCreated.updateTurns();
+    NumberOfTurnsData.updateTurns();
+}
+
+
+function PlayerTurn(player1,player2,indexOneValue,indexTwoValue){
+    if(CreatePlayer.prototype.bIsPlayerTurn){
+        GameBoard.setValueGameBoard(indexOneValue, indexTwoValue, player1.value);
+        displayGameBoardWeb.updateDisplayGameBoard();
+        document.querySelector(".Player-Turn").textContent = `${player2.playerName}'s Turn`;
+        document.querySelector(".Player-Turn").classList.remove("boardCellUpdatedBackgroundX");
+        document.querySelector(".Player-Turn").classList.add("boardCellUpdatedBackgroundO");
+        CreatePlayer.prototype.bIsPlayerTurn = false;
+        return;
+    }
+    GameBoard.setValueGameBoard(indexOneValue, indexTwoValue, player2.value);
+        displayGameBoardWeb.updateDisplayGameBoard();
+        document.querySelector(".Player-Turn").textContent = `${player1.playerName}'s Turn`;
+        CreatePlayer.prototype.bIsPlayerTurn = true;
+        document.querySelector(".Player-Turn").classList.remove("boardCellUpdatedBackgroundO");
+        document.querySelector(".Player-Turn").classList.add("boardCellUpdatedBackgroundX");
 }
